@@ -1,0 +1,23 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+.app-bg {
+  background-image: radial-gradient(circle, #d4d4d8 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.dark .app-bg {
+  background-image: radial-gradient(circle, #27272a 1px, transparent 1px);
+}
