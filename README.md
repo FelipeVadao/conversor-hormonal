@@ -1,73 +1,60 @@
-# React + TypeScript + Vite
+# Conversor Hormonal
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Web app para conversão de dosagens hormonais — pensado para auxiliar praticantes de musculação a calcular corretamente a aplicação de compostos injetáveis e orais, evitando erros de cálculo manual.
 
-Currently, two official plugins are available:
+⚠️ **Aviso:** esta é uma ferramenta de cálculo auxiliar e não substitui orientação médica profissional. O uso de esteroides anabolizantes sem acompanhamento médico pode causar sérios danos à saúde.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Funcionalidades
 
-## React Compiler
+- **Conversor de Injetáveis (mg ↔ ml):** informe a concentração do composto (mg/ml) e converta nos dois sentidos — quantos ml aplicar para uma dose desejada em mg, ou quantos mg equivalem a um volume em ml.
+- **Conversor de Orais (mg → comprimidos):** informe a dosagem por comprimido/cápsula e a dose-alvo; o app calcula quantos comprimidos tomar, incluindo frações comuns (¼, ½, ¾).
+- **Lista de compostos pré-nomeados**, injetáveis e orais, com apelidos populares (Test E, Deca, Anavar, Dbol, etc.) e opção de composto livre.
+- **Tema claro/escuro** com toggle na interface.
+- **PT-BR / EN** — interface totalmente traduzida via i18next.
+- **Sem login, sem backend, sem histórico:** tudo roda no navegador; nenhum dado é armazenado ou enviado a servidores.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Stack
 
-## Expanding the ESLint configuration
+- [React](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)
+- [Vite](https://vite.dev/)
+- [Tailwind CSS v4](https://tailwindcss.com/)
+- [i18next](https://www.i18next.com/) / [react-i18next](https://react.i18next.com/)
+- [lucide-react](https://lucide.dev/) para ícones
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Desenvolvimento
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev        # servidor de desenvolvimento (http://localhost:5173)
+npm run build      # type-check (tsc) + build de produção (Vite)
+npm run lint       # ESLint
+npm run preview    # serve o build de produção localmente
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Estrutura do projeto
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```
+src/
+├── data/compounds.ts       # fonte única dos compostos (injetáveis e orais)
+├── i18n/                   # configuração i18next e locales (pt-BR, en)
+├── hooks/useTheme.ts       # estado do tema claro/escuro
+├── components/
+│   ├── ui/                 # componentes de UI genéricos (Input, Select, Button, ...)
+│   ├── InjectableConverter.tsx
+│   ├── OralConverter.tsx
+│   ├── ResultCard.tsx
+│   ├── Disclaimer.tsx
+│   ├── ThemeToggle.tsx
+│   └── LanguageToggle.tsx
+└── App.tsx
+```
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Adicionar um novo composto requer uma entrada em `src/data/compounds.ts` e as chaves correspondentes em `src/i18n/locales/pt-BR.json` e `en.json`.
+
+## Deploy
+
+Hospedado na [Vercel](https://vercel.com/):
+
+```bash
+vercel deploy --prod --scope felipevadaos-projects
 ```

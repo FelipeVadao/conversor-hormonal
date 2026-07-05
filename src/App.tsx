@@ -1,5 +1,9 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Syringe, Pill } from 'lucide-react'
+import { useTheme } from './hooks/useTheme'
+import SegmentedControl from './components/ui/SegmentedControl'
+import Panel from './components/ui/Panel'
 import Disclaimer from './components/Disclaimer'
 import ThemeToggle from './components/ThemeToggle'
 import LanguageToggle from './components/LanguageToggle'
@@ -10,20 +14,13 @@ type Tab = 'injectable' | 'oral'
 
 export default function App() {
   const { t } = useTranslation()
-  const [dark, setDark] = useState(false)
+  const { dark, toggleTheme } = useTheme()
   const [tab, setTab] = useState<Tab>('injectable')
-
-  const toggleTheme = () => {
-    setDark(prev => {
-      document.documentElement.classList.toggle('dark', !prev)
-      return !prev
-    })
-  }
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 app-bg transition-colors">
-      {/* Header — always dark */}
-      <header className="w-full bg-zinc-950 border-b border-zinc-800">
+      {/* Header — theme-aware instrument bezel */}
+      <header className="sticky top-0 z-10 w-full bg-white/80 dark:bg-zinc-950/80 backdrop-blur border-b border-zinc-200 dark:border-zinc-800">
         <div className="max-w-lg mx-auto px-3 sm:px-4 py-3 flex items-center justify-between gap-3">
           {/* Logo */}
           <div className="flex items-center gap-2.5 min-w-0">
@@ -34,7 +31,7 @@ export default function App() {
                 <circle cx="9.5" cy="11.5" r="0.65" fill="white"/>
               </svg>
             </div>
-            <h1 className="text-sm font-bold text-white tracking-tight truncate">
+            <h1 className="text-sm font-bold text-zinc-900 dark:text-white tracking-tight truncate">
               {t('appTitle')}
             </h1>
           </div>
@@ -51,26 +48,20 @@ export default function App() {
         <Disclaimer />
 
         {/* Tabs */}
-        <div className="flex rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-800">
-          {(['injectable', 'oral'] as Tab[]).map(tabKey => (
-            <button
-              key={tabKey}
-              onClick={() => setTab(tabKey)}
-              className={`flex-1 py-3 text-sm font-semibold transition-all ${
-                tab === tabKey
-                  ? 'bg-orange-500 text-white'
-                  : 'bg-white dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100'
-              }`}
-            >
-              {t(`tabs.${tabKey}`)}
-            </button>
-          ))}
-        </div>
+        <SegmentedControl<Tab>
+          ariaLabel={t('labels.type')}
+          value={tab}
+          onChange={setTab}
+          options={[
+            { value: 'injectable', label: t('tabs.injectable'), icon: Syringe },
+            { value: 'oral', label: t('tabs.oral'), icon: Pill },
+          ]}
+        />
 
         {/* Card */}
-        <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm p-3 sm:p-5">
+        <Panel className="p-3 sm:p-5">
           {tab === 'injectable' ? <InjectableConverter /> : <OralConverter />}
-        </div>
+        </Panel>
       </main>
     </div>
   )
